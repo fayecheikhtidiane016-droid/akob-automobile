@@ -11,15 +11,25 @@ export type Vehicle = {
   mileage: number | null;
   fuel: string;
   transmission: string;
-  seats: number;
+  seats: number | null;
   color: string;
   description: string;
+  location?: string;
+  contactPhones?: string[];
   listingType: 'sale';
   status: 'available' | 'sold' | 'unavailable';
   published: boolean;
 };
 
 export const demoVehicles: Vehicle[] = [
+  {
+    id: 'demo-mazda-cx3', slug: 'mazda-cx-3', brand: 'Mazda', model: 'CX-3', year: 2017,
+    category: 'SUV', image: '/vehicles/mazda-cx3.png', images: ['/vehicles/mazda-cx3.png'],
+    salePrice: null, mileage: 123000, fuel: 'Essence', transmission: 'Automatique', seats: null, color: 'Rouge',
+    description: 'Mazda CX-3 en bon état. Visite possible sur rendez-vous.',
+    location: 'Dakar', contactPhones: ['769886122', '773143556'],
+    listingType: 'sale', status: 'available', published: true,
+  },
   {
     id: 'demo-1', slug: 'toyota-land-cruiser-prado', brand: 'Toyota', model: 'Land Cruiser Prado', year: 2023,
     category: 'SUV', image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1400&q=85', images: ['https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1400&q=85'],
@@ -50,7 +60,7 @@ export function formatCfa(amount: number) {
   return new Intl.NumberFormat('fr-FR').format(amount) + ' FCFA';
 }
 
-export async function getVehicles() {
+export async function getVehicles(): Promise<Vehicle[]> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return demoVehicles;

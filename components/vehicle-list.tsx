@@ -17,7 +17,7 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
   const brands = [...new Set(vehicles.map((vehicle) => vehicle.brand))];
   const transmissions = [...new Set(vehicles.map((vehicle) => vehicle.transmission).filter(Boolean))];
   const fuels = [...new Set(vehicles.map((vehicle) => vehicle.fuel).filter(Boolean))];
-  const seatCounts = [...new Set(vehicles.map((vehicle) => vehicle.seats))].sort((a, b) => a - b);
+  const seatCounts = [...new Set(vehicles.map((vehicle) => vehicle.seats).filter((seats): seats is number => seats !== null))].sort((a, b) => a - b);
   const filtered = useMemo(() => vehicles.filter((vehicle) =>
     (category === 'Toutes les catégories' || vehicle.category === category)
     && (brand === 'Toutes les marques' || vehicle.brand === brand)

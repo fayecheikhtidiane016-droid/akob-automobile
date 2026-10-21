@@ -11,7 +11,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
       </Link>
       <div className="vehicle-info">
         <div className="vehicle-heading"><div><span className="vehicle-year">{vehicle.year} · {vehicle.brand}</span><h3>{vehicle.model}</h3></div><span className="vehicle-price">{vehicle.salePrice ? formatCfa(vehicle.salePrice) : 'Sur demande'}</span></div>
-        <div className="vehicle-meta"><span><Gauge size={15} />{vehicle.mileage ? `${new Intl.NumberFormat('fr-FR').format(vehicle.mileage)} km` : 'Kilométrage N/A'}</span><span><Users size={15} />{vehicle.seats} places</span><span>{vehicle.transmission}</span></div>
+        <div className="vehicle-meta"><span><Gauge size={15} />{vehicle.mileage ? `${new Intl.NumberFormat('fr-FR').format(vehicle.mileage)} km` : 'Kilométrage N/A'}</span>{vehicle.seats !== null && <span><Users size={15} />{vehicle.seats} places</span>}<span>{vehicle.transmission}</span></div>
         <Link href={`/contact?objet=achat&vehicule=${vehicle.slug}`} className="vehicle-action">Contacter le vendeur <span>↗</span></Link>
       </div>
     </article>
