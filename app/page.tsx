@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowDown, ArrowUpRight, BadgeCheck, Headphones, ShieldCheck } from 'lucide-react';
 import { VehicleCard } from '@/components/vehicle-card';
-import { getVehicles } from '@/lib/vehicles';
+import { getVehicles } from '@/lib/vehicle-data';
 import { siteConfig } from '@/lib/site-config';
 
 export default async function HomePage() {

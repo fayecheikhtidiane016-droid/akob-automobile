@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight, Fuel, Gauge, MapPin, Settings2, Users } from 'lucide-react';
 import { VehicleCard } from '@/components/vehicle-card';
 import { VehicleGallery } from '@/components/vehicle-gallery';
+import { formatCfa } from '@/lib/format-cfa';
 import { siteConfig } from '@/lib/site-config';
-import { formatCfa, getVehicles } from '@/lib/vehicles';
+import { getVehicles } from '@/lib/vehicle-data';
 
 export default async function VehicleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

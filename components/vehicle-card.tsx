@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight, Gauge, Users } from 'lucide-react';
 import type { Vehicle } from '@/lib/vehicles';
-import { formatCfa } from '@/lib/vehicles';
+import { formatCfa } from '@/lib/format-cfa';
 
 export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   return (

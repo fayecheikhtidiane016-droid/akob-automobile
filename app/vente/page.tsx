@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { VehicleList } from '@/components/vehicle-list';
-import { getVehicles } from '@/lib/vehicles';
+import { getVehicles } from '@/lib/vehicle-data';
 
 export const metadata: Metadata = { title: 'Nos véhicules | Akob Automobile' };
 
