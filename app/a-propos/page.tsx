@@ -1,0 +1,9 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ArrowUpRight, BadgeCheck, Headphones, ShieldCheck } from 'lucide-react';
+
+export const metadata: Metadata = { title: 'Notre agence | Akob Automobile' };
+
+export default function AboutPage() {
+  return <div className="editorial-page"><section className="editorial-hero"><span className="eyebrow">À PROPOS · AKOB AUTOMOBILE</span><h1>La mobilité pensée<br /><em>pour vous.</em></h1><p>Nous croyons qu'une bonne expérience automobile commence par une écoute attentive et se construit dans la confiance.</p></section><section className="editorial-split"><div className="editorial-photo" /><div><span className="eyebrow">NOTRE APPROCHE</span><h2>À chaque projet,<br /><em>la bonne réponse.</em></h2><p>Location pour vos déplacements ou acquisition d'un véhicule : notre équipe vous accompagne avec une sélection adaptée, des échanges simples et des informations claires.</p><p>Akob Automobile est basée à Dakar et reste disponible pour répondre à vos questions, vérifier les disponibilités et préparer votre prochain trajet.</p><div className="promise-list"><div><ShieldCheck /><span><strong>La confiance d'abord</strong><small>Des informations claires à chaque étape.</small></span></div><div><BadgeCheck /><span><strong>Une sélection réfléchie</strong><small>Des véhicules choisis pour leur confort et leur fiabilité.</small></span></div><div><Headphones /><span><strong>Un vrai accompagnement</strong><small>Une équipe présente avant et après votre demande.</small></span></div></div><Link className="text-link" href="/contact">Parler à notre équipe <ArrowUpRight size={16} /></Link></div></section></div>;
+}

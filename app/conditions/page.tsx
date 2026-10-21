@@ -1,0 +1,7 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Conditions générales | Akob Automobile' };
+
+export default function TermsPage() {
+  return <article className="legal-page"><span className="eyebrow">INFORMATIONS LÉGALES</span><h1>Conditions <em>générales.</em></h1><p className="legal-updated">Projet de contenu à compléter et valider par l'agence avant publication.</p><h2>Demandes de réservation</h2><p>L'envoi d'une demande en ligne ne confirme pas la réservation. Celle-ci prend effet uniquement après confirmation expresse par Akob Automobile et accord sur les dates, le véhicule, les tarifs et les conditions applicables.</p><h2>Location</h2><p>Les conditions définitives de location, notamment celles relatives au conducteur, au permis, au dépôt de garantie, à l'assurance, au carburant, à l'état des lieux, aux retards et aux annulations, doivent être communiquées par l'agence avant toute remise du véhicule.</p><h2>Vente</h2><p>Les annonces présentent les informations disponibles au moment de leur publication. Le prix, le kilométrage, l'état du véhicule et les modalités de vente doivent être vérifiés avec l'agence. Toute vente reste soumise à un accord écrit et aux documents requis.</p><h2>Informations à compléter</h2><p>Akob Automobile doit ajouter ses coordonnées juridiques, son adresse, les règles applicables, le tribunal compétent et les modalités de réclamation avant la mise en production. Ce modèle n'est pas un conseil juridique.</p></article>;
+}
