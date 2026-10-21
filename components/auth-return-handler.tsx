@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
+import { ADMIN_EMAIL } from '@/lib/admin-identity';
 
 export function AuthReturnHandler() {
   useEffect(() => {
@@ -45,7 +46,7 @@ export function AuthReturnHandler() {
       const { data: profile } = user
         ? await supabase.from('profiles').select('role').eq('id', user.id).single()
         : { data: null };
-      if (!profile || !['owner', 'assistant', 'developer'].includes(profile.role)) {
+      if (!user || user.email?.toLowerCase() !== ADMIN_EMAIL || !profile || profile.role !== 'owner') {
         await supabase.auth.signOut();
         window.location.replace('/admin?invite=unauthorized');
         return;

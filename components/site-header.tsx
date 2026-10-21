@@ -19,12 +19,12 @@ export function SiteHeader() {
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
         <nav className={open ? 'main-nav is-open' : 'main-nav'} aria-label="Navigation principale">
-          <Link href="/location" onClick={close}>Location</Link>
-          <Link href="/vente" onClick={close}>Vente</Link>
+          <Link href="/vente" onClick={close}>Véhicules à vendre</Link>
+          <Link href="/contact?objet=importation" onClick={close}>Importation</Link>
           <Link href="/a-propos" onClick={close}>Notre agence</Link>
           <Link href="/contact" onClick={close}>Contact</Link>
-          <Link href="/admin" onClick={close}>Espace équipe</Link>
-          <Link href="/location" className="nav-cta" onClick={close}>Trouver une voiture <span>↗</span></Link>
+          <Link href="/admin" onClick={close}>Administration</Link>
+          <Link href="/vente" className="nav-cta" onClick={close}>Voir les véhicules <span>↗</span></Link>
         </nav>
       </div>
     </header>

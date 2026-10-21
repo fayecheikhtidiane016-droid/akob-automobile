@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { ADMIN_EMAIL } from '@/lib/admin-identity';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export async function GET(request: Request) {
@@ -22,7 +23,7 @@ export async function GET(request: Request) {
   if (verificationError) return NextResponse.redirect(new URL('/admin?invite=expired', url));
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from('profiles').select('role').eq('id', user.id).single() : { data: null };
-  if (!profile || !['owner', 'assistant', 'developer'].includes(profile.role)) {
+  if (!user || user.email?.toLowerCase() !== ADMIN_EMAIL || !profile || profile.role !== 'owner') {
     await supabase.auth.signOut();
     return NextResponse.redirect(new URL('/admin?invite=unauthorized', url));
   }

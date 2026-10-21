@@ -6,7 +6,7 @@ import { VehiclePhotoManager } from '@/components/vehicle-photo-manager';
 
 type Vehicle = {
   id: string; brand: string; model: string; year: number; category: string;
-  listing_type: 'rent' | 'sale' | 'both'; status: string; daily_rate: number | null;
+  listing_type: 'sale'; status: 'available' | 'sold' | 'unavailable';
   sale_price: number | null; mileage: number | null; fuel: string;
   transmission: string; seats: number; color: string; description: string;
   published: boolean;
@@ -41,16 +41,15 @@ export function VehicleManagePanel({ vehicles }: { vehicles: Vehicle[] }) {
 function VehicleEditor({ vehicle, onMessage }: { vehicle: Vehicle; onMessage: (message: string) => void }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [listingType, setListingType] = useState(vehicle.listing_type);
 
   async function save(formData: FormData) {
     const data = Object.fromEntries(formData.entries());
     const body = {
       ...data,
       id: vehicle.id,
+      listing_type: 'sale',
       year: Number(data.year),
       seats: Number(data.seats),
-      daily_rate: data.daily_rate ? Number(data.daily_rate) : null,
       sale_price: data.sale_price ? Number(data.sale_price) : null,
       mileage: data.mileage ? Number(data.mileage) : null,
       published: data.published === 'on',
@@ -67,10 +66,8 @@ function VehicleEditor({ vehicle, onMessage }: { vehicle: Vehicle; onMessage: (m
       <label>Modèle<input name="model" defaultValue={vehicle.model} required /></label>
       <label>Année<input name="year" type="number" min="1950" defaultValue={vehicle.year} required /></label>
       <label>Catégorie<input name="category" defaultValue={vehicle.category} required /></label>
-      <label>Type d'annonce<select name="listing_type" value={listingType} onChange={(event) => setListingType(event.target.value as Vehicle['listing_type'])}><option value="rent">Location</option><option value="sale">Vente</option><option value="both">Location et vente</option></select></label>
-      <label>Statut<select name="status" defaultValue={vehicle.status}><option value="available">Disponible</option><option value="reserved">Réservé</option><option value="rented">Loué</option><option value="sold">Vendu</option><option value="unavailable">Indisponible</option></select></label>
-      {['rent', 'both'].includes(listingType) && <label>Prix par jour (FCFA)<input name="daily_rate" type="number" min="0" defaultValue={vehicle.daily_rate ?? ''} required /></label>}
-      {['sale', 'both'].includes(listingType) && <label>Prix de vente (FCFA)<input name="sale_price" type="number" min="0" defaultValue={vehicle.sale_price ?? ''} required /></label>}
+      <label>Statut<select name="status" defaultValue={vehicle.status}><option value="available">Disponible</option><option value="sold">Vendu</option><option value="unavailable">Indisponible</option></select></label>
+      <label>Prix de vente (FCFA)<input name="sale_price" type="number" min="0" defaultValue={vehicle.sale_price ?? ''} /></label>
       <label>Kilométrage<input name="mileage" type="number" min="0" defaultValue={vehicle.mileage ?? ''} /></label>
       <label>Carburant<input name="fuel" defaultValue={vehicle.fuel} /></label>
       <label>Transmission<input name="transmission" defaultValue={vehicle.transmission} /></label>

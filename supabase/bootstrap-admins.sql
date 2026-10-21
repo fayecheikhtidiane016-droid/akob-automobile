@@ -14,7 +14,7 @@ begin
   end if;
 
   insert into public.profiles (id, role, developer_access, full_name)
-  values (owner_user_id, 'owner', true, 'Faye Cheikh Tidiane')
+  values (owner_user_id, 'owner', false, 'Faye Cheikh Tidiane')
   on conflict (id) do update
     set role = excluded.role,
         developer_access = excluded.developer_access,
