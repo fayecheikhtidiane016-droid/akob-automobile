@@ -4,6 +4,7 @@ import { getAdminSession } from '@/lib/admin';
 
 const photoSchema = z.object({ vehicle_id: z.string().uuid(), is_primary: z.enum(['true', 'false']).optional() });
 const allowedTypes: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/avif': 'avif' };
+const MAX_PHOTOS_PER_VEHICLE = 4;
 
 export async function GET(request: Request) {
   const session = await getAdminSession();
@@ -25,12 +26,16 @@ export async function POST(request: Request) {
   const form = await request.formData();
   const parsed = photoSchema.safeParse({ vehicle_id: form.get('vehicle_id'), is_primary: form.get('is_primary') ?? undefined });
   const files = form.getAll('photos').filter((value): value is File => value instanceof File);
-  if (!parsed.success || !files.length || files.length > 12) return NextResponse.json({ error: 'Sélectionnez entre 1 et 12 photos.' }, { status: 400 });
+  if (!parsed.success || !files.length || files.length > MAX_PHOTOS_PER_VEHICLE) return NextResponse.json({ error: `Sélectionnez entre 1 et ${MAX_PHOTOS_PER_VEHICLE} photos.` }, { status: 400 });
   const { data: vehicle } = await session.supabase.from('vehicles').select('id').eq('id', parsed.data.vehicle_id).single();
   if (!vehicle) return NextResponse.json({ error: 'Véhicule introuvable.' }, { status: 404 });
   if (files.some((file) => !allowedTypes[file.type] || file.size > 10 * 1024 * 1024)) return NextResponse.json({ error: 'Chaque image doit être JPG, PNG, WebP ou AVIF et ne pas dépasser 10 Mo.' }, { status: 400 });
 
-  const { data: currentPhotos } = await session.supabase.from('vehicle_photos').select('id, sort_order').eq('vehicle_id', vehicle.id).order('sort_order', { ascending: false }).limit(1);
+  const { data: currentPhotos, error: photosError } = await session.supabase.from('vehicle_photos').select('id, sort_order').eq('vehicle_id', vehicle.id).order('sort_order', { ascending: false });
+  if (photosError) return NextResponse.json({ error: 'Impossible de vérifier les photos existantes.' }, { status: 500 });
+  if ((currentPhotos?.length ?? 0) + files.length > MAX_PHOTOS_PER_VEHICLE) {
+    return NextResponse.json({ error: `Chaque véhicule peut avoir au maximum ${MAX_PHOTOS_PER_VEHICLE} photos. Supprimez-en avant d’en ajouter.` }, { status: 400 });
+  }
   let order = (currentPhotos?.[0]?.sort_order ?? -1) + 1;
   const uploaded: string[] = [];
   for (const [index, file] of files.entries()) {

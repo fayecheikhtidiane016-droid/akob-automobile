@@ -61,7 +61,7 @@ export async function getVehicles() {
   if (error || !data) return [];
 
   return Promise.all(data.map(async (row) => {
-    const photos = [...(row.vehicle_photos ?? [])].sort((a, b) => Number(b.is_primary) - Number(a.is_primary) || a.sort_order - b.sort_order);
+    const photos = [...(row.vehicle_photos ?? [])].sort((a, b) => Number(b.is_primary) - Number(a.is_primary) || a.sort_order - b.sort_order).slice(0, 4);
     const signedPhotos = await Promise.all(photos.map(async (photo) => {
       const { data: signed } = await supabase.storage.from('vehicle-photos').createSignedUrl(photo.storage_path, 3600);
       return signed?.signedUrl ?? '';

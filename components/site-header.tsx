@@ -19,7 +19,8 @@ export function SiteHeader() {
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
         <nav className={open ? 'main-nav is-open' : 'main-nav'} aria-label="Navigation principale">
-          <Link href="/vente" onClick={close}>Véhicules à vendre</Link>
+          <Link href="/" onClick={close}>Accueil</Link>
+          <Link href="/vente" onClick={close}>Nos véhicules</Link>
           <Link href="/contact?objet=importation" onClick={close}>Importation</Link>
           <Link href="/a-propos" onClick={close}>Notre agence</Link>
           <Link href="/contact" onClick={close}>Contact</Link>
