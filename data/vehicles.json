@@ -1,32 +1,5 @@
 [
   {
-    "id": "github-d32b92ee-9bb1-4935-9f0c-bd642ef4ff40",
-    "slug": "bmw-serie-2-2019-2c879d",
-    "brand": "Bmw",
-    "model": "Série 2",
-    "year": 2019,
-    "category": "Sub",
-    "image": "/vehicles/bmw-serie-2-2019-2c879d-1.jpeg",
-    "images": [
-      "/vehicles/bmw-serie-2-2019-2c879d-1.jpeg"
-    ],
-    "salePrice": null,
-    "mileage": 55555,
-    "fuel": "Essence",
-    "transmission": "Auto",
-    "seats": 5,
-    "color": "Rouge",
-    "description": "Bienn",
-    "location": "Dakar",
-    "contactPhones": [
-      "769886122",
-      "773143556"
-    ],
-    "listingType": "sale",
-    "status": "available",
-    "published": true
-  },
-  {
     "id": "demo-mazda-cx3",
     "slug": "mazda-cx-3",
     "brand": "Mazda",
