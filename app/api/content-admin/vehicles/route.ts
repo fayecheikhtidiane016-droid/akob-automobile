@@ -155,6 +155,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, vehicle }, { status: 201 });
   } catch (error) {
     console.error('GitHub vehicle catalog update failed:', error);
-    return NextResponse.json({ error: 'Enregistrement impossible. Vérifiez la configuration GitHub et réessayez.' }, { status: 500 });
+    const detail = error instanceof Error ? error.message : 'Erreur inconnue.';
+    return NextResponse.json({ error: `Enregistrement impossible : ${detail}` }, { status: 500 });
   }
 }
