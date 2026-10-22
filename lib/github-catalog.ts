@@ -110,7 +110,7 @@ export async function readGithubVehicles(fallback: Vehicle[]): Promise<Vehicle[]
 export async function commitGithubCatalog(files: GitHubFile[], deletePaths: string[] = []) {
   const config = getConfig();
   const ref = await githubRequest<{ object: { sha: string } }>(config, `git/ref/heads/${encodeURIComponent(config.branch)}`);
-  const parent = await githubRequest<{ object: { sha: string } }>(config, `git/commits/${ref.object.sha}`);
+  const parent = await githubRequest<{ tree: { sha: string } }>(config, `git/commits/${ref.object.sha}`);
 
   const treeEntries: Array<{ path: string; mode: '100644'; type: 'blob'; sha: string | null }> = await Promise.all(files.map(async (file) => {
     const blob = await githubRequest<{ sha: string }>(config, 'git/blobs', {
@@ -123,7 +123,7 @@ export async function commitGithubCatalog(files: GitHubFile[], deletePaths: stri
 
   const tree = await githubRequest<{ sha: string }>(config, 'git/trees', {
     method: 'POST',
-    body: JSON.stringify({ base_tree: parent.object.sha, tree: treeEntries }),
+    body: JSON.stringify({ base_tree: parent.tree.sha, tree: treeEntries }),
   });
   const commit = await githubRequest<{ sha: string }>(config, 'git/commits', {
     method: 'POST',
