@@ -14,8 +14,7 @@ export function AuthReturnHandler() {
     const accessToken = hash.get('access_token');
     const refreshToken = hash.get('refresh_token');
     const hasInviteTokens = Boolean(code || (tokenHash && (type === 'invite' || type === 'recovery')) || (accessToken && refreshToken && (type === 'invite' || type === 'recovery')));
-    const shouldCheckAdminSession = window.location.pathname === '/' && url.searchParams.get('public') !== '1';
-    if (!hasInviteTokens && !shouldCheckAdminSession) return;
+    if (!hasInviteTokens) return;
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -26,20 +25,15 @@ export function AuthReturnHandler() {
 
     const supabase = createBrowserClient(supabaseUrl, supabaseKey);
     void (async () => {
-      if (!hasInviteTokens) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
-      } else {
-        const result = code
-          ? await supabase.auth.exchangeCodeForSession(code)
-          : tokenHash
-            ? await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as 'invite' | 'recovery' })
-            : await supabase.auth.setSession({ access_token: accessToken!, refresh_token: refreshToken! });
+      const result = code
+        ? await supabase.auth.exchangeCodeForSession(code)
+        : tokenHash
+          ? await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as 'invite' | 'recovery' })
+          : await supabase.auth.setSession({ access_token: accessToken!, refresh_token: refreshToken! });
 
-        if (result.error) {
-          window.location.replace('/admin?invite=expired');
-          return;
-        }
+      if (result.error) {
+        window.location.replace('/admin?invite=expired');
+        return;
       }
 
       const { data: { user } } = await supabase.auth.getUser();
@@ -51,7 +45,7 @@ export function AuthReturnHandler() {
         window.location.replace('/admin?invite=unauthorized');
         return;
       }
-      window.location.replace(hasInviteTokens ? type === 'recovery' ? '/admin/setup?mode=recovery' : '/admin/setup' : '/admin');
+      window.location.replace(type === 'recovery' ? '/admin/setup?mode=recovery' : '/admin/setup');
     })();
   }, []);
 
