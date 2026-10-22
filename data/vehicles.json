@@ -1,32 +1,5 @@
 [
   {
-    "id": "github-2ddd36f3-6c30-4966-8180-cf68f228fbbd",
-    "slug": "bmw-ser3-2017-69ba10",
-    "brand": "bmw",
-    "model": "ser3",
-    "year": 2017,
-    "category": "SUV",
-    "image": "/vehicles/bmw-ser3-2017-69ba10-1.png",
-    "images": [
-      "/vehicles/bmw-ser3-2017-69ba10-1.png"
-    ],
-    "salePrice": null,
-    "mileage": 345678,
-    "fuel": "DIESEL",
-    "transmission": "AUTO",
-    "seats": 5,
-    "color": "ROUGE",
-    "description": "456789",
-    "location": "Dakar",
-    "contactPhones": [
-      "769886122",
-      "773143556"
-    ],
-    "listingType": "sale",
-    "status": "available",
-    "published": true
-  },
-  {
     "id": "demo-mazda-cx3",
     "slug": "mazda-cx-3",
     "brand": "Mazda",
