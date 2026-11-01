@@ -106,7 +106,10 @@ export function GithubAdminDashboard({ vehicles }: { vehicles: Vehicle[] }) {
         <div className="admin-panel-heading"><div><span className="eyebrow">CATALOGUE</span><h2>Véhicules enregistrés</h2></div><span>{vehicles.length} annonce{vehicles.length !== 1 ? 's' : ''}</span></div>
         <div className="admin-table-scroll"><table className="admin-table"><thead><tr><th>Véhicule</th><th>Type</th><th>Tarif</th><th>Disponibilité</th><th>Publication</th><th>Actions</th></tr></thead><tbody>
           {vehicles.map((vehicle) => <tr key={vehicle.id}>
-            <td><strong>{vehicle.brand} {vehicle.model}</strong><small>{vehicle.year} · {vehicle.images.length} photo(s)</small>
+            <td><div className="admin-vehicle-cell">{vehicle.image
+              ? <img className="admin-vehicle-thumbnail" src={vehicle.image} alt={`${vehicle.brand} ${vehicle.model}`} loading="lazy" />
+              : <span className="admin-vehicle-thumbnail admin-vehicle-thumbnail-empty">Photo à venir</span>}
+              <span><strong>{vehicle.brand} {vehicle.model}</strong><small>{vehicle.year} · {vehicle.images.length} photo(s)</small></span></div>
               <details><summary>Ajouter des photos</summary><form id={`photos-${vehicle.id}`} action={addPhotos} className="vehicle-admin-form">
                 <input type="hidden" name="action" value="photos" /><input type="hidden" name="id" value={vehicle.id} />
                 <label className="wide">Photos (4 Mo au total maximum)<input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple required disabled={busy || vehicle.images.length >= 5} /></label>

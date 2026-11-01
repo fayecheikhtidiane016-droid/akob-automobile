@@ -125,7 +125,7 @@ export function RentalBooking({ vehicles, catalogError = false }: { vehicles: Ve
                   aria-pressed={selectedVehicleId === vehicle.id}
                 >
                   {vehicle.image
-                    ? <span className="rental-vehicle-image" style={{ backgroundImage: `url("${vehicle.image}")` }} />
+                    ? <span className="rental-vehicle-image"><img src={vehicle.image} alt={`${vehicle.brand} ${vehicle.model}`} loading="lazy" /></span>
                     : <span className="rental-vehicle-image rental-vehicle-placeholder"><CarFront size={34} /><small>Photo à venir</small></span>}
                   <span className="rental-vehicle-info">
                     <strong>{vehicle.brand} {vehicle.model}</strong>

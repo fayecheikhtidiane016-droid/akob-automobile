@@ -6,7 +6,8 @@ import { formatCfa } from '@/lib/format-cfa';
 export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   return (
     <article className="vehicle-card">
-      <Link className="vehicle-image" href={`/vehicules/${vehicle.slug}`} style={{ backgroundImage: `url("${vehicle.image}")` }} aria-label={`Découvrir ${vehicle.brand} ${vehicle.model}`}>
+      <Link className="vehicle-image" href={`/vehicules/${vehicle.slug}`} aria-label={`Découvrir ${vehicle.brand} ${vehicle.model}`}>
+        {vehicle.image && <img className="vehicle-cover" src={vehicle.image} alt={`${vehicle.brand} ${vehicle.model}`} loading="lazy" />}
         <span className="vehicle-category">{vehicle.category}</span>{vehicle.images.length > 1 && <span className="vehicle-photo-count">{vehicle.images.length} photos</span>}<span className="image-arrow"><ArrowUpRight size={18} /></span>
       </Link>
       <div className="vehicle-info">
