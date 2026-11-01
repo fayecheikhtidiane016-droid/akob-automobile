@@ -1,5 +1,35 @@
 [
   {
+    "id": "github-5b904b43-3c93-4b21-8517-f6fc55f36b2f",
+    "slug": "bmw-m6-2018-f08ac5",
+    "brand": "BMW",
+    "model": "M6",
+    "year": 2018,
+    "category": "Suv",
+    "image": "/vehicles/bmw-m6-2018-f08ac5-1.jpeg",
+    "images": [
+      "/vehicles/bmw-m6-2018-f08ac5-1.jpeg",
+      "/vehicles/bmw-m6-2018-f08ac5-2.jpeg"
+    ],
+    "salePrice": null,
+    "dailyRate": 44444,
+    "airportTransferRate": 33333,
+    "mileage": 44444,
+    "fuel": "Diesel",
+    "transmission": "Automatique",
+    "seats": 5,
+    "color": "Rouge",
+    "description": "Bienn",
+    "location": "Dakar",
+    "contactPhones": [
+      "769886122",
+      "773143556"
+    ],
+    "listingType": "rent",
+    "status": "available",
+    "published": true
+  },
+  {
     "id": "github-0faa9e0b-78dc-4bd4-8d96-dc6f05469fa0",
     "slug": "bmw-sr5-2017-98eb08",
     "brand": "Bmw",
