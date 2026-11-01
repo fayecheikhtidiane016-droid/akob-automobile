@@ -1,35 +1,5 @@
 [
   {
-    "id": "github-2503c43b-ae81-4693-8662-5a2c7eb58c0a",
-    "slug": "bmw-s2-2017-a6c555",
-    "brand": "Bmw",
-    "model": "S2",
-    "year": 2017,
-    "category": "Suv",
-    "image": "/vehicles/bmw-s2-2017-a6c555-1.jpeg",
-    "images": [
-      "/vehicles/bmw-s2-2017-a6c555-1.jpeg",
-      "/vehicles/bmw-s2-2017-a6c555-2.jpeg"
-    ],
-    "salePrice": 10000,
-    "dailyRate": 2000,
-    "airportTransferRate": 100000,
-    "mileage": 1000000,
-    "fuel": "Essence",
-    "transmission": "Automatique",
-    "seats": 5,
-    "color": "Rouge",
-    "description": "Bien",
-    "location": "Dakar",
-    "contactPhones": [
-      "769886122",
-      "773143556"
-    ],
-    "listingType": "rent",
-    "status": "available",
-    "published": true
-  },
-  {
     "id": "demo-mazda-cx3",
     "slug": "mazda-cx-3",
     "brand": "Mazda",
