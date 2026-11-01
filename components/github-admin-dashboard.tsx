@@ -46,20 +46,20 @@ export function GithubAdminDashboard({ vehicles }: { vehicles: Vehicle[] }) {
     }
   }
 
-  async function mutate(action: 'publish' | 'delete', vehicle: Vehicle) {
+  async function mutate(action: 'publish' | 'delete' | 'status', vehicle: Vehicle, status?: string) {
     if (action === 'delete' && !window.confirm(`Supprimer ${vehicle.brand} ${vehicle.model} du catalogue ?`)) return;
     setNotice('');
     const response = await fetch('/api/content-admin/vehicles', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, id: vehicle.id, published: !vehicle.published }),
+      body: JSON.stringify({ action, id: vehicle.id, published: !vehicle.published, status }),
     });
     const result = await response.json();
     if (!response.ok) {
       setNotice(result.error ?? 'Modification impossible.');
       return;
     }
-    setNotice(action === 'publish' ? 'Publication mise à jour.' : 'Véhicule supprimé.');
+    setNotice(action === 'publish' ? 'Publication mise à jour.' : action === 'status' ? 'Disponibilité mise à jour.' : 'Véhicule supprimé.');
     startTransition(() => router.refresh());
   }
 
@@ -86,7 +86,10 @@ export function GithubAdminDashboard({ vehicles }: { vehicles: Vehicle[] }) {
           <label>Modèle<input name="model" required maxLength={100} /></label>
           <label>Année<input name="year" type="number" min="1950" max={new Date().getFullYear() + 1} required /></label>
           <label>Catégorie<input name="category" placeholder="SUV, Berline…" required /></label>
-          <label>Prix (FCFA, vide = sur demande)<input name="salePrice" type="number" min="0" /></label>
+          <label>Type d'annonce<select name="listingType" defaultValue="sale"><option value="sale">Vente</option><option value="rent">Location</option><option value="both">Vente et location</option></select></label>
+          <label>Tarif journalier de location (FCFA)<input name="dailyRate" type="number" min="1" /></label>
+          <label>Transfert AIBD–Dakar (FCFA, facultatif)<input name="airportTransferRate" type="number" min="1" /></label>
+          <label>Prix de vente (FCFA, vide = sur demande)<input name="salePrice" type="number" min="0" /></label>
           <label>Kilométrage<input name="mileage" type="number" min="0" defaultValue="0" required /></label>
           <label>Carburant<input name="fuel" maxLength={40} /></label>
           <label>Transmission<input name="transmission" maxLength={60} /></label>
@@ -94,14 +97,14 @@ export function GithubAdminDashboard({ vehicles }: { vehicles: Vehicle[] }) {
           <label>Couleur<input name="color" maxLength={40} /></label>
           <label>Localisation<input name="location" defaultValue="Dakar" maxLength={100} /></label>
           <label className="wide">Description<textarea name="description" rows={3} maxLength={5000} /></label>
-          <label className="wide">Photos (JPEG, PNG, WebP ou AVIF, 5 maximum, 4 Mo au total)<input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple required /></label>
+          <label className="wide">Photos (facultatives, JPEG, PNG, WebP ou AVIF, 5 maximum, 4 Mo au total)<input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple /></label>
           <label className="publish-toggle"><input type="hidden" name="published" value="false" /><input type="checkbox" name="published" value="true" defaultChecked /> Publier après enregistrement</label>
           <div className="modal-actions"><button className="button button-dark" disabled={busy || pending}>{busy ? 'Enregistrement…' : 'Ajouter le véhicule'} <Plus size={16} /></button></div>
         </form>
       </section>
       <section className="admin-panel" id="catalogue">
         <div className="admin-panel-heading"><div><span className="eyebrow">CATALOGUE</span><h2>Véhicules enregistrés</h2></div><span>{vehicles.length} annonce{vehicles.length !== 1 ? 's' : ''}</span></div>
-        <div className="admin-table-scroll"><table className="admin-table"><thead><tr><th>Véhicule</th><th>Prix</th><th>Publication</th><th>Actions</th></tr></thead><tbody>
+        <div className="admin-table-scroll"><table className="admin-table"><thead><tr><th>Véhicule</th><th>Type</th><th>Tarif</th><th>Disponibilité</th><th>Publication</th><th>Actions</th></tr></thead><tbody>
           {vehicles.map((vehicle) => <tr key={vehicle.id}>
             <td><strong>{vehicle.brand} {vehicle.model}</strong><small>{vehicle.year} · {vehicle.images.length} photo(s)</small>
               <details><summary>Ajouter des photos</summary><form id={`photos-${vehicle.id}`} action={addPhotos} className="vehicle-admin-form">
@@ -111,7 +114,9 @@ export function GithubAdminDashboard({ vehicles }: { vehicles: Vehicle[] }) {
                 <button className="button button-light" disabled={busy || pending || vehicle.images.length >= 5}>Importer</button>
               </form></details>
             </td>
-            <td>{vehicle.salePrice ? `${new Intl.NumberFormat('fr-FR').format(vehicle.salePrice)} FCFA` : 'Sur demande'}</td>
+            <td>{vehicle.listingType === 'rent' ? 'Location' : vehicle.listingType === 'both' ? 'Vente & location' : 'Vente'}</td>
+            <td>{vehicle.dailyRate ? `${new Intl.NumberFormat('fr-FR').format(vehicle.dailyRate)} FCFA / jour` : vehicle.salePrice ? `${new Intl.NumberFormat('fr-FR').format(vehicle.salePrice)} FCFA` : 'Sur demande'}{vehicle.airportTransferRate && <small>{new Intl.NumberFormat('fr-FR').format(vehicle.airportTransferRate)} FCFA · AIBD–Dakar</small>}</td>
+            <td><select value={vehicle.status} aria-label={`Disponibilité de ${vehicle.brand} ${vehicle.model}`} onChange={(event) => mutate('status', vehicle, event.target.value)}><option value="available">Disponible</option>{vehicle.listingType !== 'sale' && <><option value="reserved">Réservé</option><option value="rented">Loué</option></>}{vehicle.listingType !== 'rent' && <option value="sold">Vendu</option>}<option value="unavailable">Indisponible</option></select></td>
             <td><button className="table-icon" disabled={pending} onClick={() => mutate('publish', vehicle)}>{vehicle.published ? <Eye size={16} /> : <EyeOff size={16} />}<span>{vehicle.published ? 'En ligne' : 'Masqué'}</span></button></td>
             <td><button className="table-icon danger" disabled={pending} title="Supprimer" onClick={() => mutate('delete', vehicle)}><Trash2 size={16} /></button></td>
           </tr>)}

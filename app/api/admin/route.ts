@@ -3,16 +3,23 @@ import { z } from 'zod';
 import { getAdminSession } from '@/lib/admin';
 
 const optionalNumber = z.preprocess((value) => value === '' || value === undefined ? null : value, z.coerce.number().nonnegative().nullable());
+const optionalPositiveInteger = z.preprocess((value) => value === '' || value === undefined ? null : value, z.coerce.number().int().positive().nullable());
 
 const vehicleSchema = z.object({
   brand: z.string().trim().min(1).max(80), model: z.string().trim().min(1).max(100), year: z.coerce.number().int().min(1950).max(new Date().getFullYear() + 1),
-  category: z.string().trim().min(1).max(60), listing_type: z.literal('sale'), status: z.enum(['available', 'sold', 'unavailable']),
-  sale_price: optionalNumber, mileage: z.preprocess((value) => value === '' || value === undefined ? null : value, z.coerce.number().int().nonnegative().nullable()),
+  category: z.string().trim().min(1).max(60), listing_type: z.enum(['sale', 'rent', 'both']), status: z.enum(['available', 'reserved', 'rented', 'sold', 'unavailable']),
+  sale_price: optionalNumber,
+  daily_rate: z.preprocess((value) => value === '' || value === undefined ? null : value, z.coerce.number().int().nonnegative().nullable()),
+  airport_transfer_rate: optionalPositiveInteger,
+  mileage: z.preprocess((value) => value === '' || value === undefined ? null : value, z.coerce.number().int().nonnegative().nullable()),
   fuel: z.string().trim().max(40), transmission: z.string().trim().max(40), seats: z.coerce.number().int().min(1).max(20), color: z.string().trim().max(40),
   description: z.string().trim().max(5000), published: z.boolean(),
+}).refine((vehicle) => !['rent', 'both'].includes(vehicle.listing_type) || (vehicle.daily_rate !== null && vehicle.daily_rate > 0), {
+  message: 'Un tarif journalier est obligatoire pour la location.',
+  path: ['daily_rate'],
 });
 
-const vehicleStatusSchema = z.object({ id: z.string().uuid(), status: z.enum(['available', 'sold', 'unavailable']), published: z.boolean().optional() });
+const vehicleStatusSchema = z.object({ id: z.string().uuid(), status: z.enum(['available', 'reserved', 'rented', 'sold', 'unavailable']), published: z.boolean().optional() });
 
 export async function GET() {
   const session = await getAdminSession();
@@ -27,7 +34,7 @@ export async function POST(request: Request) {
   if (!session) return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 });
   const body = await request.json().catch(() => null);
   const parsed = vehicleSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: 'Vérifiez les informations du véhicule.' }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Vérifiez les informations du véhicule.' }, { status: 400 });
   const value = parsed.data;
   const slug = `${value.brand}-${value.model}`.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const { data, error } = await session.supabase.from('vehicles').insert({ ...value, slug: `${slug}-${value.year}-${crypto.randomUUID().slice(0, 6)}`, created_by: session.user.id }).select('id').single();

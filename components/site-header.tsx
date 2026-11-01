@@ -21,11 +21,12 @@ export function SiteHeader() {
         <nav className={open ? 'main-nav is-open' : 'main-nav'} aria-label="Navigation principale">
           <Link href="/" onClick={close}>Accueil</Link>
           <Link href="/vente" onClick={close}>Nos véhicules</Link>
+          <Link href="/reservation" onClick={close}>Location & réservation</Link>
           <Link href="/contact?objet=importation" onClick={close}>Importation</Link>
           <Link href="/a-propos" onClick={close}>Notre agence</Link>
           <Link href="/contact" onClick={close}>Contact</Link>
           <Link href="/admin" onClick={close}>Administration</Link>
-          <Link href="/vente" className="nav-cta" onClick={close}>Voir les véhicules <span>↗</span></Link>
+          <Link href="/reservation" className="nav-cta" onClick={close}>Réserver <span>↗</span></Link>
         </nav>
       </div>
     </header>

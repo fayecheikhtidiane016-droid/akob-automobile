@@ -7,8 +7,8 @@ import { VehicleManagePanel } from '@/components/vehicle-manage-panel';
 
 type AdminVehicle = {
   id: string; brand: string; model: string; year: number; category: string;
-  listing_type: 'sale'; status: 'available' | 'sold' | 'unavailable';
-  sale_price: number | null; mileage: number | null; fuel: string;
+  listing_type: 'sale' | 'rent' | 'both'; status: 'available' | 'reserved' | 'rented' | 'sold' | 'unavailable';
+  sale_price: number | null; daily_rate: number | null; airport_transfer_rate: number | null; mileage: number | null; fuel: string;
   transmission: string; seats: number; color: string; description: string;
   published: boolean;
 };
@@ -34,10 +34,12 @@ export function AdminDashboard({ name, initialVehicles }: { name: string | null;
     const result = Object.fromEntries(formData.entries());
     const body = {
       ...result,
-      listing_type: 'sale',
+      listing_type: result.listing_type,
       year: Number(result.year),
       seats: Number(result.seats),
       sale_price: result.sale_price ? Number(result.sale_price) : null,
+      daily_rate: result.daily_rate ? Number(result.daily_rate) : null,
+      airport_transfer_rate: result.airport_transfer_rate ? Number(result.airport_transfer_rate) : null,
       mileage: result.mileage ? Number(result.mileage) : null,
       published: result.published === 'on',
     };
@@ -85,24 +87,25 @@ export function AdminDashboard({ name, initialVehicles }: { name: string | null;
     </aside>
     <main className="admin-content">
       <div className="admin-topbar"><span>AKOB AUTOMOBILE <i>/</i> ADMINISTRATION</span><a href="/" target="_blank">Voir le site ↗</a></div>
-      <div className="admin-page-heading" id="overview"><div><span className="eyebrow">TABLEAU DE BORD</span><h1>Bonjour{name ? `, ${name.split(' ')[0]}` : ''}.</h1><p>Gérez les véhicules à vendre, leurs descriptions et leurs photos.</p></div><button className="button button-dark" onClick={() => setShowForm(true)}><Plus size={16} /> Ajouter un véhicule</button></div>
+      <div className="admin-page-heading" id="overview"><div><span className="eyebrow">TABLEAU DE BORD</span><h1>Bonjour{name ? `, ${name.split(' ')[0]}` : ''}.</h1><p>Gérez les véhicules à vendre, à louer, leurs tarifs et leurs photos.</p></div><button className="button button-dark" onClick={() => setShowForm(true)}><Plus size={16} /> Ajouter un véhicule</button></div>
       {notice && <p className="admin-notice" role="status">{notice}</p>}
       <a className="button button-light photo-shortcut" href="#photo-management"><ImagePlus size={16} /> Ajouter des photos à un véhicule</a>
-      <div className="stats-grid"><Stat label="Véhicules" value={vehicles.length} /><Stat label="Disponibles" value={vehicles.filter((vehicle) => vehicle.status === 'available').length} /><Stat label="Vendus" value={vehicles.filter((vehicle) => vehicle.status === 'sold').length} /></div>
+      <div className="stats-grid"><Stat label="Véhicules" value={vehicles.length} /><Stat label="Disponibles" value={vehicles.filter((vehicle) => vehicle.status === 'available').length} /><Stat label="En location" value={vehicles.filter((vehicle) => vehicle.status === 'rented').length} /></div>
       <VehicleManagePanel vehicles={vehicles} />
       <section className="admin-panel" id="inventory">
         <div className="admin-panel-heading"><div><span className="eyebrow">ANNONCES</span><h2>Vos véhicules</h2></div><span>{vehicles.length} annonce{vehicles.length !== 1 ? 's' : ''}</span></div>
-        <div className="admin-table-scroll"><table className="admin-table"><thead><tr><th>Véhicule</th><th>Prix</th><th>Statut</th><th>Publication</th><th>Actions</th></tr></thead><tbody>
+        <div className="admin-table-scroll"><table className="admin-table"><thead><tr><th>Véhicule</th><th>Type</th><th>Tarif</th><th>Statut</th><th>Publication</th><th>Actions</th></tr></thead><tbody>
           {vehicles.map((vehicle) => <tr key={vehicle.id}>
             <td><strong>{vehicle.brand} {vehicle.model}</strong><small>{vehicle.year} · {vehicle.category}</small></td>
-            <td>{vehicle.sale_price ? `${new Intl.NumberFormat('fr-FR').format(vehicle.sale_price)} FCFA` : 'Sur demande'}</td>
-            <td><select value={vehicle.status} aria-label={`Statut de ${vehicle.brand} ${vehicle.model}`} onChange={(event) => update({ id: vehicle.id, status: event.target.value, published: vehicle.published })}><option value="available">Disponible</option><option value="sold">Vendu</option><option value="unavailable">Indisponible</option></select></td>
+            <td>{vehicle.listing_type === 'rent' ? 'Location' : vehicle.listing_type === 'both' ? 'Vente & location' : 'Vente'}</td>
+            <td>{vehicle.daily_rate ? `${new Intl.NumberFormat('fr-FR').format(vehicle.daily_rate)} FCFA / jour` : vehicle.sale_price ? `${new Intl.NumberFormat('fr-FR').format(vehicle.sale_price)} FCFA` : 'Sur demande'}{vehicle.airport_transfer_rate && <small>{new Intl.NumberFormat('fr-FR').format(vehicle.airport_transfer_rate)} FCFA · AIBD–Dakar</small>}</td>
+            <td><select value={vehicle.status} aria-label={`Statut de ${vehicle.brand} ${vehicle.model}`} onChange={(event) => update({ id: vehicle.id, status: event.target.value, published: vehicle.published })}><option value="available">Disponible</option>{vehicle.listing_type !== 'sale' && <><option value="reserved">Réservé</option><option value="rented">Loué</option></>}{vehicle.listing_type !== 'rent' && <option value="sold">Vendu</option>}<option value="unavailable">Indisponible</option></select></td>
             <td><button className="table-icon" title={vehicle.published ? 'Dépublier' : 'Publier'} onClick={() => update({ id: vehicle.id, status: vehicle.status, published: !vehicle.published })}>{vehicle.published ? <Eye size={16} /> : <EyeOff size={16} />}<span>{vehicle.published ? 'En ligne' : 'Masqué'}</span></button></td>
             <td><button className="table-icon danger" title="Supprimer" onClick={() => remove(vehicle)}><Trash2 size={16} /></button></td>
           </tr>)}
         </tbody></table>{vehicles.length === 0 && <p className="empty-state">Aucun véhicule enregistré.</p>}</div>
       </section>
-      {showForm && <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowForm(false); }}><section className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="vehicle-modal-title"><div className="modal-heading"><div><span className="eyebrow">ANNONCES</span><h2 id="vehicle-modal-title">Ajouter un véhicule</h2></div><button aria-label="Fermer" onClick={() => setShowForm(false)}><X size={20} /></button></div><form action={createVehicle} className="vehicle-admin-form"><label>Marque<input name="brand" required /></label><label>Modèle<input name="model" required /></label><label>Année<input name="year" type="number" min="1950" max="2027" required /></label><label>Catégorie<input name="category" placeholder="SUV, Berline…" required /></label><label>Statut<select name="status"><option value="available">Disponible</option><option value="sold">Vendu</option><option value="unavailable">Indisponible</option></select></label><label>Prix de vente (FCFA)<input name="sale_price" type="number" min="0" /></label><label>Kilométrage<input name="mileage" type="number" min="0" /></label><label>Carburant<input name="fuel" /></label><label>Transmission<input name="transmission" /></label><label>Places<input name="seats" type="number" min="1" defaultValue="5" required /></label><label>Couleur<input name="color" /></label><label className="wide">Description<textarea name="description" rows={3} /></label><label className="publish-toggle"><input type="checkbox" name="published" defaultChecked /> Publier immédiatement</label><div className="modal-actions"><button type="button" className="button button-light" onClick={() => setShowForm(false)}>Annuler</button><button className="button button-dark" disabled={pending}>Ajouter le véhicule <Plus size={16} /></button></div></form></section></div>}
+      {showForm && <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowForm(false); }}><section className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="vehicle-modal-title"><div className="modal-heading"><div><span className="eyebrow">ANNONCES</span><h2 id="vehicle-modal-title">Ajouter un véhicule</h2></div><button aria-label="Fermer" onClick={() => setShowForm(false)}><X size={20} /></button></div><form action={createVehicle} className="vehicle-admin-form"><label>Marque<input name="brand" required /></label><label>Modèle<input name="model" required /></label><label>Année<input name="year" type="number" min="1950" max="2027" required /></label><label>Catégorie<input name="category" placeholder="SUV, Berline…" required /></label><label>Type d'annonce<select name="listing_type" defaultValue="sale"><option value="sale">Vente</option><option value="rent">Location</option><option value="both">Vente et location</option></select></label><label>Statut<select name="status"><option value="available">Disponible</option><option value="sold">Vendu</option><option value="unavailable">Indisponible</option></select></label><label>Tarif journalier de location (FCFA)<input name="daily_rate" type="number" min="1" /></label><label>Transfert AIBD–Dakar (FCFA, facultatif)<input name="airport_transfer_rate" type="number" min="1" /></label><label>Prix de vente (FCFA)<input name="sale_price" type="number" min="0" /></label><label>Kilométrage<input name="mileage" type="number" min="0" /></label><label>Carburant<input name="fuel" /></label><label>Transmission<input name="transmission" /></label><label>Places<input name="seats" type="number" min="1" defaultValue="5" required /></label><label>Couleur<input name="color" /></label><label className="wide">Description<textarea name="description" rows={3} /></label><label className="publish-toggle"><input type="checkbox" name="published" defaultChecked /> Publier immédiatement</label><div className="modal-actions"><button type="button" className="button button-light" onClick={() => setShowForm(false)}>Annuler</button><button className="button button-dark" disabled={pending}>Ajouter le véhicule <Plus size={16} /></button></div></form></section></div>}
     </main>
   </div>;
 }

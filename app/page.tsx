@@ -10,7 +10,7 @@ export default async function HomePage() {
     <section className="hero">
       <div className="hero-image" />
       <div className="hero-shade" />
-      <div className="hero-content"><span className="eyebrow light-eyebrow"><i /> VENTE & IMPORTATION AUTOMOBILE</span><h1>Le véhicule idéal.<br /><em>Votre projet, notre route.</em></h1><p>Découvrez nos véhicules à vendre ou confiez-nous votre recherche à l’importation. Un accompagnement clair, de la demande jusqu’à la remise des clés.</p><div className="hero-actions"><Link className="button button-gold" href="/vente">Voir les véhicules <ArrowUpRight size={17} /></Link><Link className="button button-outline" href="/contact?objet=importation">Demander une importation <ArrowUpRight size={17} /></Link></div></div>
+      <div className="hero-content"><span className="eyebrow light-eyebrow"><i /> VENTE, LOCATION & IMPORTATION AUTOMOBILE</span><h1>Le véhicule idéal.<br /><em>Votre projet, notre route.</em></h1><p>Découvrez nos véhicules à vendre, réservez une location ou confiez-nous votre recherche à l’importation. Un accompagnement clair, de la demande jusqu’à la remise des clés.</p><div className="hero-actions"><Link className="button button-gold" href="/vente">Voir les véhicules <ArrowUpRight size={17} /></Link><Link className="button button-outline" href="/reservation">Louer un véhicule <ArrowUpRight size={17} /></Link></div></div>
       <div className="hero-caption"><span>01 / 04</span><span>Liberté, confort, confiance.</span><ArrowDown size={16} /></div>
     </section>
     <section className="trust-strip"><span>AKOB AUTOMOBILE</span><span className="trust-line" /><span>VOTRE PROCHAINE ROUTE COMMENCE ICI</span><span className="trust-location">DAKAR · SÉNÉGAL</span></section>

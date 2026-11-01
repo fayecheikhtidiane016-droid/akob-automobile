@@ -16,8 +16,10 @@ export type Vehicle = {
   description: string;
   location?: string;
   contactPhones?: string[];
-  listingType: 'sale';
-  status: 'available' | 'sold' | 'unavailable';
+  listingType: 'sale' | 'rent' | 'both';
+  dailyRate?: number | null;
+  airportTransferRate?: number | null;
+  status: 'available' | 'reserved' | 'rented' | 'sold' | 'unavailable';
   published: boolean;
 };
 

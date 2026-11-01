@@ -10,7 +10,10 @@ const vehicleSchema = z.object({
   model: z.string().trim().min(1).max(100),
   year: z.coerce.number().int().min(1950).max(new Date().getFullYear() + 1),
   category: z.string().trim().min(1).max(60),
+  listingType: z.enum(['sale', 'rent', 'both']),
   salePrice: z.preprocess((value) => value === '' || value === undefined ? null : value, z.coerce.number().nonnegative().nullable()),
+  dailyRate: z.preprocess((value) => value === '' || value === undefined ? null : value, z.coerce.number().int().positive().nullable()),
+  airportTransferRate: z.preprocess((value) => value === '' || value === undefined ? null : value, z.coerce.number().int().positive().nullable()),
   mileage: z.coerce.number().int().nonnegative(),
   fuel: z.string().trim().max(40),
   transmission: z.string().trim().max(60),
@@ -19,12 +22,16 @@ const vehicleSchema = z.object({
   description: z.string().trim().max(5000),
   location: z.string().trim().max(100),
   published: z.enum(['true', 'false']).transform((value) => value === 'true'),
+}).refine((vehicle) => !['rent', 'both'].includes(vehicle.listingType) || vehicle.dailyRate !== null, {
+  message: 'Un tarif journalier est obligatoire pour la location.',
+  path: ['dailyRate'],
 });
 
 const mutationSchema = z.object({
-  action: z.enum(['publish', 'delete']),
+  action: z.enum(['publish', 'delete', 'status']),
   id: z.string().min(1).max(100),
   published: z.boolean().optional(),
+  status: z.enum(['available', 'reserved', 'rented', 'sold', 'unavailable']).optional(),
 });
 
 const MAX_PHOTOS = 5;
@@ -50,6 +57,13 @@ export async function POST(request: Request) {
 
       if (parsed.data.action === 'publish') {
         const updated = vehicles.map((vehicle) => vehicle.id === existing.id ? { ...vehicle, published: parsed.data.published ?? !vehicle.published } : vehicle);
+        await commitGithubCatalog([{ path: 'data/vehicles.json', content: JSON.stringify(updated, null, 2) }]);
+        return NextResponse.json({ ok: true });
+      }
+
+      if (parsed.data.action === 'status') {
+        if (!parsed.data.status) return NextResponse.json({ error: 'Statut manquant.' }, { status: 400 });
+        const updated = vehicles.map((vehicle) => vehicle.id === existing.id ? { ...vehicle, status: parsed.data.status! } : vehicle);
         await commitGithubCatalog([{ path: 'data/vehicles.json', content: JSON.stringify(updated, null, 2) }]);
         return NextResponse.json({ ok: true });
       }
@@ -87,7 +101,7 @@ export async function POST(request: Request) {
       }));
       const setCover = form.get('cover') === 'true';
       const updated = vehicles.map((item) => item.id === vehicle.id
-        ? { ...item, image: setCover ? additions[0].image : item.image, images: [...item.images, ...additions.map((photo) => photo.image)] }
+        ? { ...item, image: setCover || !item.image ? additions[0].image : item.image, images: [...item.images, ...additions.map((photo) => photo.image)] }
         : item);
       await commitGithubCatalog([
         ...additions.map(({ path, content, encoding }) => ({ path, content, encoding })),
@@ -97,10 +111,10 @@ export async function POST(request: Request) {
     }
 
     const parsed = vehicleSchema.safeParse(Object.fromEntries(form.entries()));
-    if (!parsed.success) return NextResponse.json({ error: 'Vérifiez les informations du véhicule.' }, { status: 400 });
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Vérifiez les informations du véhicule.' }, { status: 400 });
     const photos = form.getAll('photos').filter((value): value is File => value instanceof File && value.size > 0);
-    if (!photos.length || photos.length > MAX_PHOTOS) {
-      return NextResponse.json({ error: `Ajoutez entre 1 et ${MAX_PHOTOS} photos.` }, { status: 400 });
+    if (photos.length > MAX_PHOTOS) {
+      return NextResponse.json({ error: `Ajoutez au maximum ${MAX_PHOTOS} photos.` }, { status: 400 });
     }
     if (photos.reduce((total, photo) => total + photo.size, 0) > MAX_TOTAL_PHOTO_BYTES) {
       return NextResponse.json({ error: 'Le poids total des photos ne doit pas dépasser 4 Mo.' }, { status: 400 });
@@ -113,6 +127,9 @@ export async function POST(request: Request) {
 
     const vehicles = await readGithubVehicles(demoVehicles);
     const value = parsed.data;
+    if (['rent', 'both'].includes(value.listingType) && value.dailyRate === null) {
+      return NextResponse.json({ error: 'Indiquez un tarif journalier pour un véhicule de location.' }, { status: 400 });
+    }
     const id = `github-${crypto.randomUUID()}`;
     const baseSlug = `${value.brand}-${value.model}`.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const slug = `${baseSlug}-${value.year}-${crypto.randomUUID().slice(0, 6)}`;
@@ -132,9 +149,11 @@ export async function POST(request: Request) {
       model: value.model,
       year: value.year,
       category: value.category,
-      image: files[0].image,
+      image: files[0]?.image ?? '',
       images: files.map((file) => file.image),
       salePrice: value.salePrice,
+      dailyRate: value.dailyRate,
+      airportTransferRate: value.airportTransferRate,
       mileage: value.mileage,
       fuel: value.fuel,
       transmission: value.transmission,
@@ -143,7 +162,7 @@ export async function POST(request: Request) {
       description: value.description,
       location: value.location,
       contactPhones: ['769886122', '773143556'],
-      listingType: 'sale',
+      listingType: value.listingType,
       status: 'available',
       published: value.published,
     };

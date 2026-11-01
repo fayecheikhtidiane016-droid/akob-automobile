@@ -9,7 +9,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="footer-main">
         <div><Link href="/" className="footer-brand" aria-label={`${siteConfig.name}, accueil`}><Image src={logo} alt={siteConfig.name} className="footer-brand-logo" /></Link><p>Vente et importation de véhicules.</p></div>
-        <div><h3>Explorer</h3><Link href="/vente">Véhicules à vendre</Link><Link href="/contact?objet=importation">Importation</Link><Link href="/a-propos">Notre agence</Link></div>
+        <div><h3>Explorer</h3><Link href="/vente">Véhicules à vendre</Link><Link href="/reservation">Location & réservation</Link><Link href="/contact?objet=importation">Importation</Link><Link href="/a-propos">Notre agence</Link></div>
         <div><h3>Nous joindre</h3><a href={`tel:${siteConfig.phone.replace(/\s/g, '')}`}>{siteConfig.phone}</a><a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a><span>{siteConfig.address}</span></div>
         <div><h3>Informations</h3><Link href="/confidentialite">Confidentialité</Link><Link href="/conditions">Conditions générales</Link><Link href="/admin">Administration <ArrowUpRight size={13} /></Link></div>
       </div>

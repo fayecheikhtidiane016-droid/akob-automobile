@@ -7,8 +7,8 @@ import { siteConfig } from '@/lib/site-config';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: `${siteConfig.name} | Vente & importation de véhicules`,
-  description: 'Découvrez nos véhicules à vendre ou confiez-nous votre projet d’importation avec Akob Automobile.',
+  title: `${siteConfig.name} | Vente, location & importation`,
+  description: 'Découvrez nos véhicules à vendre, réservez une location ou confiez-nous votre projet d’importation avec Akob Automobile.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

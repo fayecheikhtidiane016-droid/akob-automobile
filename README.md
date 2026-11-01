@@ -1,6 +1,6 @@
 # Akob Automobile
 
-Site Next.js de vente et d’importation de véhicules, avec catalogue public, formulaire de contact et espace administrateur.
+Site Next.js de vente, location et importation de véhicules, avec catalogue public, réservation WhatsApp, formulaire de contact et espace administrateur.
 
 ## Démarrage local
 
@@ -16,7 +16,7 @@ Sans configuration de stockage, le site démarre en mode démonstration avec des
 
 ## Administration sans Supabase
 
-L'espace `/admin` peut utiliser GitHub comme stockage partagé : les fiches et les photos sont enregistrées dans le dépôt et un commit déclenche le déploiement habituel du site. Supabase n'est pas nécessaire pour cette option.
+L'espace `/admin` utilise GitHub comme stockage partagé : les fiches et les photos sont enregistrées dans le dépôt et un commit déclenche le déploiement habituel du site. Lorsque les variables GitHub sont configurées, GitHub est prioritaire pour le catalogue public et l'administration, même si des variables Supabase sont également présentes.
 
 1. Créez un **Fine-grained personal access token** GitHub limité au dépôt du site, avec la permission **Contents: Read and write**. Ne mettez jamais ce token dans une variable `NEXT_PUBLIC_*` et ne le partagez pas.
 2. Dans `.env.local` pour le développement, puis dans les variables d'environnement du projet Vercel pour la production, renseignez :
@@ -29,7 +29,7 @@ L'espace `/admin` peut utiliser GitHub comme stockage partagé : les fiches et l
    ```
 
 3. Redémarrez le serveur local ou redéployez le projet Vercel après avoir ajouté les variables. Ouvrez `/admin` et connectez-vous avec `ADMIN_PASSWORD`.
-4. Ajoutez une annonce et jusqu'à cinq photos (4 Mo au total maximum). La modification est committée dans GitHub et devient visible sur le site après le déploiement.
+4. Ajoutez une annonce de vente ou de location, ses tarifs (journalier et éventuellement transfert AIBD–Dakar) et jusqu'à cinq photos (facultatives, 4 Mo au total maximum). Les fiches et photos sont committées dans GitHub et visibles sur le site après le déploiement.
 
 Le cookie d'administration est HttpOnly et signé avec le token GitHub. Le bouton/lien d'administration n'est pas un contrôle d'accès : la protection repose sur le mot de passe et la validation côté serveur. Le dépôt ne doit pas contenir de secrets.
 
@@ -65,9 +65,10 @@ Importer le dépôt dans Vercel et sélectionner Next.js. Pour l'administration 
 ## Parcours inclus
 
 - Accueil, annonces de véhicules à vendre, filtres, fiches véhicule et contact WhatsApp configurable.
+- Parcours de location : formule, trajet, dates, sélection d'un véhicule de location publié et demande préremplie sur WhatsApp. Les véhicules, tarifs journaliers, tarif AIBD–Dakar et photos sont enregistrés dans le catalogue GitHub `data/vehicles.json` par le panneau d'administration ; aucune migration ou configuration Supabase n'est requise pour la location. Une demande WhatsApp ne confirme pas la disponibilité.
 - Demandes d’informations sur un achat ou un projet d’importation.
 - Contact public, confidentialité, conditions à faire valider, 404 et gestion d'erreur.
-- Espace administrateur : gestion GitHub protégée par mot de passe ou connexion Supabase facultative ; création, publication et suppression d'annonces.
+- Espace administrateur : gestion GitHub protégée par mot de passe ou connexion Supabase facultative ; création, publication et suppression d'annonces de vente ou de location, modification des tarifs et gestion des photos.
 - Protection RLS sur les tables privées et bucket photos privé.
 
 Les coordonnées, textes juridiques, véhicules de démonstration, tarifs et identifiants WhatsApp doivent être remplacés ou vérifiés par l'agence avant mise en production. Les témoignages ne sont affichés que lorsque l'agence pourra fournir des témoignages réels ; aucune donnée client de démonstration n'est incluse.

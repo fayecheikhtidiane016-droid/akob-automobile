@@ -6,8 +6,8 @@ import { VehiclePhotoManager } from '@/components/vehicle-photo-manager';
 
 type Vehicle = {
   id: string; brand: string; model: string; year: number; category: string;
-  listing_type: 'sale'; status: 'available' | 'sold' | 'unavailable';
-  sale_price: number | null; mileage: number | null; fuel: string;
+  listing_type: 'sale' | 'rent' | 'both'; status: 'available' | 'reserved' | 'rented' | 'sold' | 'unavailable';
+  sale_price: number | null; daily_rate: number | null; airport_transfer_rate: number | null; mileage: number | null; fuel: string;
   transmission: string; seats: number; color: string; description: string;
   published: boolean;
 };
@@ -47,10 +47,12 @@ function VehicleEditor({ vehicle, onMessage }: { vehicle: Vehicle; onMessage: (m
     const body = {
       ...data,
       id: vehicle.id,
-      listing_type: 'sale',
+      listing_type: data.listing_type,
       year: Number(data.year),
       seats: Number(data.seats),
       sale_price: data.sale_price ? Number(data.sale_price) : null,
+      daily_rate: data.daily_rate ? Number(data.daily_rate) : null,
+      airport_transfer_rate: data.airport_transfer_rate ? Number(data.airport_transfer_rate) : null,
       mileage: data.mileage ? Number(data.mileage) : null,
       published: data.published === 'on',
     };
@@ -66,7 +68,10 @@ function VehicleEditor({ vehicle, onMessage }: { vehicle: Vehicle; onMessage: (m
       <label>Modèle<input name="model" defaultValue={vehicle.model} required /></label>
       <label>Année<input name="year" type="number" min="1950" defaultValue={vehicle.year} required /></label>
       <label>Catégorie<input name="category" defaultValue={vehicle.category} required /></label>
-      <label>Statut<select name="status" defaultValue={vehicle.status}><option value="available">Disponible</option><option value="sold">Vendu</option><option value="unavailable">Indisponible</option></select></label>
+      <label>Type d'annonce<select name="listing_type" defaultValue={vehicle.listing_type}><option value="sale">Vente</option><option value="rent">Location</option><option value="both">Vente et location</option></select></label>
+      <label>Statut<select name="status" defaultValue={vehicle.status}><option value="available">Disponible</option><option value="reserved">Réservé</option><option value="rented">Loué</option><option value="sold">Vendu</option><option value="unavailable">Indisponible</option></select></label>
+      <label>Tarif journalier de location (FCFA)<input name="daily_rate" type="number" min="1" defaultValue={vehicle.daily_rate ?? ''} /></label>
+      <label>Transfert AIBD–Dakar (FCFA)<input name="airport_transfer_rate" type="number" min="1" defaultValue={vehicle.airport_transfer_rate ?? ''} /></label>
       <label>Prix de vente (FCFA)<input name="sale_price" type="number" min="0" defaultValue={vehicle.sale_price ?? ''} /></label>
       <label>Kilométrage<input name="mileage" type="number" min="0" defaultValue={vehicle.mileage ?? ''} /></label>
       <label>Carburant<input name="fuel" defaultValue={vehicle.fuel} /></label>
