@@ -36,7 +36,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
         <strong>{vehicle.salePrice ? formatCfa(vehicle.salePrice) : 'Sur demande'}</strong>
         <span className="availability"><i />{vehicle.status === 'available' ? 'Disponible' : 'Nous consulter'}</span>
         <Link href={`/contact?objet=achat&vehicule=${vehicle.slug}`} className="button button-dark">Contacter le vendeur <ArrowUpRight size={17} /></Link>
-        <a className="text-link" href={`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(`Bonjour ${siteConfig.name}, je suis intéressé(e) par le véhicule ${vehicle.brand} ${vehicle.model}.`)}`} target="_blank" rel="noreferrer">Écrire sur WhatsApp <ArrowUpRight size={15} /></a>
+        {siteConfig.whatsappNumbers.map((number, index) => <a className="text-link" key={number} href={`https://wa.me/${number}?text=${encodeURIComponent(`Bonjour ${siteConfig.name}, je suis intéressé(e) par le véhicule ${vehicle.brand} ${vehicle.model}.`)}`} target="_blank" rel="noreferrer">WhatsApp {siteConfig.phones[index] ?? `+${number}`} <ArrowUpRight size={15} /></a>)}
         {vehicle.contactPhones?.length ? <div className="vehicle-contact-phones"><span>Appeler directement</span>{vehicle.contactPhones.map((phone) => <a key={phone} href={`tel:+221${phone}`}>+221 {phone.slice(0, 2)} {phone.slice(2, 5)} {phone.slice(5, 7)} {phone.slice(7)}</a>)}</div> : <p>Notre équipe vous répondra pour échanger sur ce véhicule.</p>}
         {vehicle.location && <p>Visite possible à {vehicle.location}, sur rendez-vous.</p>}
       </aside>

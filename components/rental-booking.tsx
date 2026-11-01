@@ -11,7 +11,6 @@ const rentalOptions = [
   { value: 'airport-transfer', label: 'Transfert aéroport' },
   { value: 'chauffeur', label: 'Location avec chauffeur' },
   { value: 'self-drive', label: 'Location sans chauffeur' },
-  { value: 'daily', label: 'Location à la journée' },
   { value: 'long-term', label: 'Location longue durée' },
   { value: 'on-demand', label: 'Mise à disposition' },
 ] as const;
@@ -59,7 +58,7 @@ export function RentalBooking({ vehicles, catalogError = false }: { vehicles: Ve
     const days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / 86_400_000));
     const estimate = packageValue === 'airport-transfer' && isAibdDakarRoute && selectedVehicle.airportTransferRate
       ? formatCfa(selectedVehicle.airportTransferRate)
-      : ['self-drive', 'daily', 'long-term'].includes(packageValue) && selectedVehicle.dailyRate
+      : ['self-drive', 'long-term'].includes(packageValue) && selectedVehicle.dailyRate
         ? formatCfa(selectedVehicle.dailyRate * days)
         : 'À confirmer avec l’agence';
     const messageLines = [
@@ -76,7 +75,11 @@ export function RentalBooking({ vehicles, catalogError = false }: { vehicles: Ve
       `Précisions : ${values.get('notes') || 'Aucune'}`,
       'Merci de confirmer la disponibilité et le tarif définitif.',
     ];
-    window.location.href = `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(messageLines.join('\n'))}`;
+    const submitter = event.nativeEvent instanceof SubmitEvent ? event.nativeEvent.submitter : null;
+    const whatsappNumber = submitter instanceof HTMLButtonElement && siteConfig.whatsappNumbers.includes(submitter.value)
+      ? submitter.value
+      : siteConfig.whatsappNumbers[0];
+    window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageLines.join('\n'))}`;
   }
 
   return (
@@ -158,11 +161,11 @@ export function RentalBooking({ vehicles, catalogError = false }: { vehicles: Ve
             <label className="rental-notes">Précisions complémentaires<textarea name="notes" rows={3} maxLength={600} placeholder="Nombre de passagers, numéro de vol, besoins particuliers…" /></label>
           </div>
         </section>
-        <button className="button button-dark" disabled={!vehicles.length}>Envoyer ma demande sur WhatsApp <span>↗</span></button>
+        <div className="rental-whatsapp-actions">{siteConfig.whatsappNumbers.map((number, index) => <button className="button button-dark" disabled={!vehicles.length} key={number} type="submit" value={number}>WhatsApp {siteConfig.phones[index] ?? `+${number}`} <span>↗</span></button>)}</div>
         {message && <p className="form-error" role="alert">{message}</p>}
         <p className="rental-disclaimer">Votre demande ne vaut pas confirmation de réservation. L’équipe Akob vous confirmera la disponibilité et le tarif final sur WhatsApp.</p>
       </form>
-      <aside className="rental-summary"><span className="eyebrow">FORMULES DE LOCATION</span><h2>La route, à votre façon.</h2><ul>{rentalOptions.map(({ value, label }) => <li key={value}>{label}</li>)}</ul><p>Les tarifs sont précisés par véhicule lorsqu’ils sont disponibles. Pour un transfert ou une prestation personnalisée, l’agence confirme le prix après étude de votre trajet.</p><div className="rental-summary-contact"><Users size={18} /><span>Une équipe à votre écoute<br /><strong>{siteConfig.phone}</strong></span></div></aside>
+      <aside className="rental-summary"><span className="eyebrow">FORMULES DE LOCATION</span><h2>La route, à votre façon.</h2><ul>{rentalOptions.map(({ value, label }) => <li key={value}>{label}</li>)}</ul><p>Les tarifs sont précisés par véhicule lorsqu’ils sont disponibles. Pour un transfert ou une prestation personnalisée, l’agence confirme le prix après étude de votre trajet.</p><div className="rental-summary-contact"><Users size={18} /><span>Une équipe à votre écoute<br />{siteConfig.phones.map((phone) => <strong key={phone}>{phone}<br /></strong>)}</span></div></aside>
     </div>
   );
 }
