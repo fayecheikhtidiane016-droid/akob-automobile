@@ -1,5 +1,32 @@
 [
   {
+    "id": "github-0faa9e0b-78dc-4bd4-8d96-dc6f05469fa0",
+    "slug": "bmw-sr5-2017-98eb08",
+    "brand": "Bmw",
+    "model": "Sr5",
+    "year": 2017,
+    "category": "Suv",
+    "image": "",
+    "images": [],
+    "salePrice": null,
+    "dailyRate": 2555,
+    "airportTransferRate": 66344,
+    "mileage": 0,
+    "fuel": "",
+    "transmission": "",
+    "seats": 5,
+    "color": "",
+    "description": "",
+    "location": "Dakar",
+    "contactPhones": [
+      "769886122",
+      "773143556"
+    ],
+    "listingType": "sale",
+    "status": "available",
+    "published": true
+  },
+  {
     "id": "github-4ff7a30b-d42c-400d-992a-dc957d017244",
     "slug": "bmw-seri2-2017-4255f0",
     "brand": "Bmw",
