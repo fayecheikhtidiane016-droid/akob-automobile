@@ -1,34 +1,5 @@
 [
   {
-    "id": "github-b56951e6-0777-4af4-a90f-43b987f364aa",
-    "slug": "bmw-ser-2019-049229",
-    "brand": "BMW",
-    "model": "Ser",
-    "year": 2019,
-    "category": "Suv",
-    "image": "/vehicles/bmw-ser-2019-049229-1.jpeg",
-    "images": [
-      "/vehicles/bmw-ser-2019-049229-1.jpeg"
-    ],
-    "salePrice": null,
-    "dailyRate": 12233,
-    "airportTransferRate": 14444,
-    "mileage": 0,
-    "fuel": "Essence",
-    "transmission": "Automatique",
-    "seats": 5,
-    "color": "Rouge",
-    "description": "Bien",
-    "location": "Dakar",
-    "contactPhones": [
-      "769886122",
-      "773143556"
-    ],
-    "listingType": "rent",
-    "status": "available",
-    "published": true
-  },
-  {
     "id": "github-4ff7a30b-d42c-400d-992a-dc957d017244",
     "slug": "bmw-seri2-2017-4255f0",
     "brand": "Bmw",
