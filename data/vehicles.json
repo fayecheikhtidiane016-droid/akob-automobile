@@ -6,11 +6,13 @@
     "model": "Seri2",
     "year": 2017,
     "category": "Suv",
-    "image": "/vehicles/bmw-seri2-2017-4255f0-extra-34c6a3de-1.jpeg",
+    "image": "/vehicles/bmw-seri2-2017-4255f0-extra-973d3180-1.jpeg",
     "images": [
       "/vehicles/bmw-seri2-2017-4255f0-extra-34c6a3de-1.jpeg",
       "/vehicles/bmw-seri2-2017-4255f0-extra-6998b48e-2.jpeg",
-      "/vehicles/bmw-seri2-2017-4255f0-extra-b7c8a9ba-3.jpeg"
+      "/vehicles/bmw-seri2-2017-4255f0-extra-b7c8a9ba-3.jpeg",
+      "/vehicles/bmw-seri2-2017-4255f0-extra-973d3180-1.jpeg",
+      "/vehicles/bmw-seri2-2017-4255f0-extra-7c326492-2.jpeg"
     ],
     "salePrice": null,
     "dailyRate": 16000,
